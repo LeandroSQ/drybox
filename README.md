@@ -24,7 +24,7 @@ Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware
 - [x] Calculates absolute humidity and the water vapor mass inside the box
 - [x] LCD 16x2 display using I2C
 - [x] Bowden tube from the box to the printer
-- [  ] Filament runout sensor
+- [ ] Filament runout sensor
   - Already bought, have to install
 
 ## Integrations
