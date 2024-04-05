@@ -1,4 +1,3 @@
-import select
 import time
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -23,41 +22,33 @@ def list_ports():
         print(port.device)
 
 def handle_commands(connection, command):
-    # SPEED <value>
-    if command.startswith("speed"):
-        parts = command.split(" ")
-        if len(parts) == 2:
-            connection.write(f"SPEED {parts[1]}\n".encode())
-            print("Sent!")
-        else:
-            print("Usage: speed <VALUE>")
-
-    # FAN <KP> <KI> <KD>
+    # FAN <value>
     if command.startswith("fan"):
         parts = command.split(" ")
-        if len(parts) == 4:
-            connection.write(f"FAN {parts[1]} {parts[2]} {parts[3]}\n".encode())
-            print("Sent!")
-        else:
-            print("Usage: fan <KP> <KI> <KD>")
-
-    # SPEED <VALUE>
-    if command.startswith("speed"):
-        parts = command.split(" ")
         if len(parts) == 2:
-            connection.write(f"SPEED {parts[1]}\n".encode())
+            # Ensure the value is between 0 and 255
+            if int(parts[1]) != -1 and (int(parts[1]) < 0 or int(parts[1]) > 255):
+                print("Value must be between 0 and 255")
+                return
+            connection.write(f"FAN {parts[1]}\n".encode())
             print("Sent!")
         else:
-            print("Usage: speed <VALUE>")
+            print("Usage: fan <VALUE>")
 
-    # HEATER <KP> <KI> <KD>
-    if command.startswith("heater"):
+    # HEATER <HEATER OR FAN> <KP> <KI> <KD>
+    if command.startswith("pid"):
         parts = command.split(" ")
-        if len(parts) == 4:
-            connection.write(f"HEATER {parts[1]} {parts[2]} {parts[3]}\n".encode())
+        if len(parts) == 5:
+            target = parts[1].lower()
+            if target != "heater" and target != "fan":
+                print("Target must be either HEATER or FAN")
+                return
+
+            target = "0" if target == "heater" else "1"
+            connection.write(f"PID {target} {parts[2]} {parts[3]} {parts[4]}\n".encode())
             print("Sent!")
         else:
-            print("Usage: heater <KP> <KI> <KD>")
+            print("Usage: PID <TARGET> <KP> <KI> <KD>")
 
     # SETPOINT <TEMP>
     if command.startswith("setpoint"):
@@ -68,9 +59,22 @@ def handle_commands(connection, command):
         else:
             print("Usage: setpoint <TEMP>")
 
+    # HEATER <VALUE>
+    if command.startswith("heater"):
+        parts = command.split(" ")
+        if len(parts) == 2:
+            # Ensure the value is between 0 and 255
+            if int(parts[1]) != -1 and (int(parts[1]) < 0 or int(parts[1]) > 255):
+                print("Value must be between 0 and 255")
+                return
+            connection.write(f"HEATER {parts[1]}\n".encode())
+            print("Sent!")
+        else:
+            print("Usage: heater <VALUE>")
+
 def loop(connection):
     max_entries = 2000
-    
+
     data = pd.DataFrame(columns = [
         "timestamp",
         "Current Fan speed",
@@ -111,9 +115,9 @@ def loop(connection):
     }
 
     plt.ion()
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10, 6), num="DRYBOX")
+    fig.suptitle("Real time IO Plot console")
     ax = fig.add_subplot(111)
-    plt.title("DRYBOX - Realtime Data Plot")
 
     # Create a thread to read the input from stdin
     buffer = []
@@ -207,6 +211,8 @@ def loop(connection):
 
             fig.canvas.draw()
             time.sleep(0.1)
+        except KeyboardInterrupt:
+            break
         except Exception as e:
             # Traceback error
             print("An error occurred")
