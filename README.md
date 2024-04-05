@@ -2,6 +2,10 @@
 
 Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware running on the MCU inside the DryBox.
 
+<p align=center>
+    <img src=".github/screenshot02.png" width=650 style="border-radius: 5pt" alt="Image of a LCD screen with the message 'DryBox 1.0 by LeandroSQ01'">
+</p>
+
 ## Features
 
 - [x] PID control of the temperature
@@ -9,16 +13,19 @@ Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware
   - Readings to Serial every X seconds
   - Commands to control the DryBox such as:
     - `SETPOINT <value>` - Set the temperature setpoint
-    - `PID <Kp> <Ki> <Kd>` - Tune the PID values
+    - `PID <HEATER OR FAN> </HEATER><Kp> <Ki> <Kd>` - Tune the PID values
     - `FAN <value>` - Override the FAN speed
     - `HEATER <value>` - Override the Heater output
 - [x] Home assistant integration
 - [x] Silent FAN PWM control
-  - Initially I was controlling the FAN using PID, but that is simply not needed anymore :p
 - [x] Safety features
   - [x] Over temperature protection
   - [x] DHT sensor error detection
 - [x] Calculates absolute humidity and the water vapor mass inside the box
+- [x] LCD 16x2 display using I2C
+- [x] Bowden tube from the box to the printer
+- [  ] Filament runout sensor
+  - Already bought, have to install
 
 ## Integrations
 
@@ -26,12 +33,11 @@ Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware
 
 Under src/tools you can find a python script that enables realtime plotting and control of the DryBox.
 <p align=center>
-    <img src=".github/screenshot01.png" width=650>
+    <img src=".github/screenshot01.png" width=650 style="border-radius: 5pt">
 </p>
 <p align=center>
     <small>Example while I was developing this</small>
 </p>
-
 
 ### Home Assistant
 
@@ -83,13 +89,14 @@ template:
 | Component | Alternatives | Description |
 | --- | --- | --- |
 | MCU | Arduino Nano or ESP8266 | Controls everything |
-| Display | LCD 2x24 or OLED 128x64 | Display the current temperature and humidity |
+| LCD 16x2 I2C | OLED 128x64 or TFT screen | Display the information, and looks cool |
 | Temperature Sensor | DHT11, DHT22 or DS18B20 | Reads the temperature and humidity inside the box |
 | FAN | 12V 80mm | Moves the air inside the box |
 | Heatsink | 80x80x10mm | Used to increase the surface area and heat more air in contact |
-| 3d printer hotend | - | Used to heat the air inside the box |
+| 3d printer hotend cartridge | - | Used to heat the air inside the box |
+| 3d printer hotend block | - | Used to attach the cartridge and thermistor to the heatsink block |
 | 100K NTC Thermistor | - | Used to read the temperature of the hotend |
-| 12V 5A~ PSU | I'm using a PSU with 10A here just to be sure | Provides power |
+| 12V 5A~ power supply | I'm using one with 10A here just to be sure | Powers the whole thing |
 | 5V to 3.3V Buck Converter | Not really needed if your board already has a tension regulator embedded | Found that DHT sensors work better at 3.3v |
 | IRLZ44N | - | Used to control the heater output voltage using PWM |
 | 2N2222 | - | Used to control the FAN output voltage using PWM |
@@ -97,8 +104,14 @@ template:
 | 3/16" screws, washers and nuts | - | Used to hold parts onto the box |
 | 60L Foam box | - | Used to isolate the air inside the box |
 | 3D printed parts | - | Used to hold the parts together |
+| PU glue | - | Used to fill holes and ensure the seal |
+| Foam glue | - | Used to glue 3D printed parts into the box |
+| M10 bowden connectors | M6 bowden, but I have heard they introduce friction on the filament | Used to connect attach a PTFE tube from the box to the printer |
+| PTFE tube | - | Used to connect the box to the printer |
 
 Some other stuff that helps:
+
+- Hot glue gun
 - IR Thermal gun
 - Multimeter
 - Soldering iron
@@ -106,9 +119,108 @@ Some other stuff that helps:
 
 And some other stuff I forgot to mention here.
 
-## Schematic
+## Circuit
 
-I have a KiCad schematic somewhere, someday I will upload it here :p
+<p align=center>
+    <img src=".github/schematic01.png" width=650 style="border-radius: 5pt">
+</p>
+<p align=center>
+    <small>Schematic</small>
+</p>
+
+<p align=center>
+    <img src=".github/schematic02.png" width=650 style="border-radius: 5pt">
+</p>
+<p align=center>
+    <small>Overview</small>
+</p>
+
+<details>
+ <summary>Click here to see the components (Generated from Tinkercad)</summary>
+ <table class="table table-bordered table-hover table-condensed">
+  <thead>
+   <tr>
+    <th title="Field #1">Name</th>
+    <th title="Field #2">Quantity</th>
+    <th title="Field #3">Component</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+    <td>MCU</td>
+    <td align="right">1</td>
+    <td>Arduino Uno R3</td>
+   </tr>
+   <tr>
+    <td>12v 10A Power Supply</td>
+    <td align="right">1</td>
+    <td>12 , 10 Power Supply</td>
+   </tr>
+   <tr>
+    <td>MOSFET IRLZ44N</td>
+    <td align="right">1</td>
+    <td>nMOS Transistor (MOSFET)</td>
+   </tr>
+   <tr>
+    <td>Transistor 2N2222</td>
+    <td align="right">1</td>
+    <td>NPN Transistor (BJT)</td>
+   </tr>
+   <tr>
+    <td>Zener Diode 12v</td>
+    <td align="right">1</td>
+    <td>12 V Zener Diode</td>
+   </tr>
+   <tr>
+    <td>RResistor 470R</td>
+    <td align="right">1</td>
+    <td>470 Ω Resistor</td>
+   </tr>
+   <tr>
+    <td>Resistor 1k</td>
+    <td align="right">1</td>
+    <td>1 kΩ Resistor</td>
+   </tr>
+   <tr>
+    <td>Resistor 2R2</td>
+    <td align="right">1</td>
+    <td>2 Ω Resistor</td>
+   </tr>
+   <tr>
+    <td>Eletrolytic Capacitor 100uF 16V</td>
+    <td align="right">1</td>
+    <td>100 uF, 16 V Polarized Capacitor</td>
+   </tr>
+   <tr>
+    <td>DHT22, UThermistor 100K NTC</td>
+    <td align="right">2</td>
+    <td>Temperature Sensor</td>
+   </tr>
+   <tr>
+    <td>Fan</td>
+    <td align="right">1</td>
+    <td>DC Motor</td>
+   </tr>
+   <tr>
+    <td>Hotend cartridge</td>
+    <td align="right">1</td>
+    <td>Heater</td>
+   </tr>
+   <tr>
+    <td>Ceramic Capacitor 104 nF</td>
+    <td align="right">1</td>
+    <td>104 nF Capacitor</td>
+   </tr>
+   <tr>
+    <td>LCD Display I2C</td>
+    <td align="right">1</td>
+    <td>PCF8574-based, 39 (0x27) LCD 16 x 2 (I2C)</td>
+   </tr>
+  </tbody>
+ </table>
+</details>
+
+I have a KiCad schematic for my PCB somewhere, someday I will upload it here :p
 
 ## Resources:
 
@@ -125,3 +237,4 @@ I have a KiCad schematic somewhere, someday I will upload it here :p
 - Sam Knight's [PWM.h](https://forum.arduino.cc/t/pwm-frequency-library/114988)
 - Max Mayfield's Thermistor2. Which I can't find the original source anymore.
 - Adafruit's [DHT sensor library](https://github.com/adafruit/DHT-sensor-library)
+- Max Promer's [LCD Custom Character Creator](https://maxpromer.github.io/LCD-Character-Creator/) which I used to create the custom icons for the LCD display
