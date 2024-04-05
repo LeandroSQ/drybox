@@ -12,8 +12,12 @@ void updateDHT() {
 
     // These cheap sensors are not 100% reliable lol
     // Check if there is a huge difference between the current and previous values
-    if (abs(temperature / boxTemperature.value) > DHT_CHANGE_THRESHOLD || abs(humidity / boxHumidity.value) > DHT_CHANGE_THRESHOLD) {
+    if ((boxTemperature.value > 0 && abs((temperature - boxTemperature.value) / boxTemperature.value) > DHT_CHANGE_THRESHOLD) || (boxHumidity.value > 0 && abs((humidity - boxHumidity.value) / boxHumidity.value) > DHT_CHANGE_THRESHOLD)) {
         log("DHT values are too far off, ignoring...");
+        log("Current: " + String(temperature) + "°C, " + String(humidity) + "%");
+        log("Previous: " + String(boxTemperature.value) + "°C, " + String(boxHumidity.value) + "%");
+        log("Threshold: " + String(DHT_CHANGE_THRESHOLD));
+        log("Difference: " + String(abs((temperature - boxTemperature.value) / boxTemperature.value)) + ", " + String(abs((humidity - boxHumidity.value) / boxHumidity.value)));
         return;
     }
 
