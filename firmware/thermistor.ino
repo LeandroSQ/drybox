@@ -6,7 +6,7 @@ void updateThermistor() {
     float temperature = thermistor.getTemp() - THERMISTOR_OFFSET;
     if (isnan(temperature) || temperature <= 0.0f) {
         log("Failed to read thermistor temperature!");
-    } else if (abs(temperature) / abs(hotEndTemperature.value) > 0.7f) {
+    } else if (hotEndTemperature.value > 0 && abs((temperature - hotEndTemperature.value) / hotEndTemperature.value) > THERMISTOR_CHANGE_THRESHOLD) {
         // Didn't really had issues with my thermistor, but just to be sure
         log("Thermistor temperature is too far off, ignoring...");
     } else {
