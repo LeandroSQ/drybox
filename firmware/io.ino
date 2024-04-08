@@ -14,17 +14,23 @@ void updateIO() {
     Serial.println();
 }
 
+int getFreeRAM() {
+    extern int __heap_start, *__brkval;
+    int v;
+    return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
 inline void handleSerialInput() {
     if (Serial.available() <= 0) return;
     String input = Serial.readString();
 
     // SAFE <BOOL>
-    if (input.startsWith("SAFE")) {
-        bool safe = input.substring(input.indexOf(" ") + 1).toInt();
-        enableHeaterSafeTemperature = safe;
-        Serial.print("Safe temperature enabled: ");
-        Serial.println(enableHeaterSafeTemperature);
-    }
+    // if (input.startsWith("SAFE")) {
+    //     bool safe = input.substring(input.indexOf(" ") + 1).toInt();
+    //     enableHeaterSafeTemperature = safe;
+    //     Serial.print("Safe temperature enabled: ");
+    //     Serial.println(enableHeaterSafeTemperature);
+    // }
 
     // FAN <VALUE>
     if (input.startsWith("FAN")) {
@@ -129,6 +135,10 @@ inline void printVerboseStats() {
         Serial.print(boxWaterVaporMass);
         Serial.print("g ");
     }
+
+    Serial.print("Free RAM: ");
+    Serial.print(getFreeRAM());
+    Serial.print(" bytes");
 }
 
 inline void printStats() {

@@ -31,7 +31,7 @@ inline void calculateAbsoluteHumidity(const float airTemperature, const float re
     const float saturationVaporPressure = 0.611 * exp((17.502 * airTemperature) / (240.97 + airTemperature)); // KPa
     const float vaporPressure = (relativeHumidity / 100.0f) * saturationVaporPressure; // KPa
 
-    // Clapeyron's equation
+    // Ideal gas law
     const float gasConstant = 8.3144621f; // J/(mol·K)
     const float waterMolarMass = 18.01528f; // g/mol
     const float kelvinTemperature = airTemperature + 273.15f; // K

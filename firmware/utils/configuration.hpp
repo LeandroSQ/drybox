@@ -7,7 +7,7 @@ constexpr bool HEATER_ENABLED = true;
 constexpr bool FAN_ENABLED = true;
 constexpr bool LCD_ENABLED = true;
 constexpr bool IO_ENABLED = true;
-constexpr bool IO_VERBOSE = true;
+constexpr bool IO_VERBOSE = false;
 
 /* Pins */
 #define DHT_PIN 2 /* Digital */
@@ -40,9 +40,9 @@ constexpr float DHT_MIN_HUMIDITY = 0.0f;
 constexpr float DHT_MAX_HUMIDITY = 100.0f;
 
 /* Intervals */
-constexpr unsigned long DHT_UPDATE_INTERVAL = 2500UL;
+constexpr unsigned long DHT_UPDATE_INTERVAL = 1750UL;
 constexpr unsigned long THERMISTOR_UPDATE_INTERVAL = 1500UL;
-constexpr unsigned long HEATER_UPDATE_INTERVAL = DHT_UPDATE_INTERVAL * 2UL + 5UL;
+constexpr unsigned long HEATER_UPDATE_INTERVAL = DHT_UPDATE_INTERVAL + 5UL;
 constexpr unsigned long FAN_UPDATE_INTERVAL = 1505UL;
 constexpr unsigned long FAN_SPEED_UPDATE_INTERVAL = 33UL;
 constexpr unsigned long LCD_UPDATE_INTERVAL = 1505UL;
@@ -53,8 +53,9 @@ constexpr float FAN_MAX_SPEED = 50.0f;
 constexpr float FAN_MIN_SPEED = 25.0f;
 
 /* Temperature */
-constexpr float MAX_HEATER_TEMP = 65.0f;
+constexpr float MAX_HEATER_TEMP = 70.0f;
 constexpr float HEATER_SETPOINT = 45.0f;
+constexpr bool ENABLE_HEATER_SAFETY_RANGE = false;
 
 /* LCD */
 constexpr unsigned char LCD_ADDRESS = 0x27;

@@ -21,7 +21,7 @@ void updateLCD() {
   	lcd.print(" ");
 
     // Hot end output %
-    lcd.printValue((unsigned char)(hotEndOutput / 255.0f * 100.0f), nullptr, Icon::PLUG, "% ", Icon::NONE, DigitCount::TRIPLE_DIGIT);
+    lcd.printValue((unsigned char)((hotEndOutput * 100.0f) / 255.0f), nullptr, Icon::PLUG, "% ", Icon::NONE, DigitCount::TRIPLE_DIGIT);
 
     // Fan speed - PWM value
     const Icon fanIcon = (millis() / LCD_UPDATE_INTERVAL) % 2 == 0 ? Icon::FAN0 : Icon::FAN1;
@@ -32,15 +32,14 @@ void updateLCD() {
   	lcd.printIcon(Icon::DROPLET);
   	lcd.print((unsigned char)boxHumidity.value);
 	lcd.print("% ");
-    lcd.printIcon(Icon::DROPLET);
 
     // Box absolute humidity
-    lcd.printValue((unsigned char)boxWaterVaporMass, nullptr, Icon::NONE, "g/m", Icon::CUBIC, DigitCount::DOUBLE_DIGIT);
+    lcd.printValue((unsigned char)boxAbsoluteHumidity, nullptr, Icon::NONE, "g/m", Icon::CUBIC, DigitCount::DOUBLE_DIGIT);
     lcd.print(" ");
 
     // Box water vapor mass, ensuring .1 precision
-    char* tmp = new char[4];
-	dtostrf(0.8, 1, 1, tmp);
+    char tmp[4] = {0};
+	dtostrf(boxWaterVaporMass, 1, 1, tmp);
     lcd.print(tmp);
     lcd.print("g");
 

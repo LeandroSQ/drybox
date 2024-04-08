@@ -29,10 +29,9 @@ unsigned long lastFanUpdate = 0UL;
 unsigned long lastFanSpeedUpdate = 0UL;
 
 /* Hotend module */
-bool enableHeaterSafeTemperature = false;
 float hotEndOutput = 0;
 float overrideHeaterOutput = -1.0f;
-PID heaterPID(1.5f, 0.05f, 0.15f, HEATER_SETPOINT, 0.0, 255.0, PID::Direction::DIRECT);
+PID heaterPID(4.5f, 1.15f, 0.15f, HEATER_SETPOINT, 0.0, 255.0, PID::Direction::DIRECT);
 unsigned long lastHeaterUpdate = 0UL;
 
 /* LCD module */

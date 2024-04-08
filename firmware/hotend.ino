@@ -27,7 +27,7 @@ void updateHeater() {
 
     hotEndOutput = heaterPID.output;
 
-    if (enableHeaterSafeTemperature && hotEndTemperature.value > heaterPID.setPoint) {
+    if (ENABLE_HEATER_SAFETY_RANGE && hotEndTemperature.value > heaterPID.setPoint) {
         // Adjust the output to reach the set point by also being aware of the maximum safe temperature
         float adjustmentFactor = 1.0f - powf((hotEndTemperature.value - heaterPID.setPoint) / ((MAX_HEATER_TEMP - heaterPID.setPoint) / 1.5), 2.0f);
         if (adjustmentFactor < 0.0f) adjustmentFactor = 0.0f;
@@ -39,6 +39,5 @@ void updateHeater() {
         else if (hotEndOutput > 255.0f) hotEndOutput = 255.0f;
     }
 
-
-    analogWrite(HEATER_PIN, hotEndOutput);
+    analogWrite(HEATER_PIN, (unsigned char) hotEndOutput);
 }

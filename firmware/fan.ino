@@ -13,14 +13,12 @@ void updateFan() {
         } else if (hotEndTemperature.value < heaterPID.setPoint / 2.0f) {
             // Enable faster heat up
             fanSpeed = 0.0f;
-        } else if (boxTemperature.value < heaterPID.setPoint * 0.96f) {
+        } else if (boxTemperature.value < heaterPID.setPoint * 0.88f) {
             // Slow down the fan as we approach the set point
             fanSpeed = (1.0f - powf(boxTemperature.value / heaterPID.setPoint, 2.0f)) * (FAN_MAX_SPEED - FAN_MIN_SPEED) + FAN_MIN_SPEED;
         } else {
             // SetPoint reached, keep the fan running
-            // fanSpeed = FAN_MIN_SPEED;
-            fanPID.update(hotEndTemperature.value);
-            fanSpeed = fanPID.output;
+            fanSpeed = FAN_MIN_SPEED;
         }
     }
 
