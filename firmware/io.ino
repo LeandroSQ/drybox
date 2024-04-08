@@ -42,7 +42,7 @@ inline void handleSerialInput() {
 
     // PID <TARGET> <KP> <KI> <KD>
     if (input.startsWith("PID")) {
-        float kp, ki, kd;
+        float kp, ki, kd, ff;
 
         int index = input.indexOf(" ");
         if (index == -1) {
@@ -51,34 +51,28 @@ inline void handleSerialInput() {
         }
 
         input = input.substring(index + 1);
-        int target = input.substring(0, input.indexOf(" ")).toInt();
-
-        input = input.substring(input.indexOf(" ") + 1);
         kp = input.substring(0, input.indexOf(" ")).toFloat();
         input = input.substring(input.indexOf(" ") + 1);
         ki = input.substring(0, input.indexOf(" ")).toFloat();
         input = input.substring(input.indexOf(" ") + 1);
         kd = input.toFloat();
+        input = input.substring(input.indexOf(" ") + 1);
+        ff = input.toFloat();
 
-        if (target == 0) {
-            heaterPID.kp = kp;
-            heaterPID.ki = ki;
-            heaterPID.kd = kd;
-            heaterPID.reset();
-            Serial.print("Heater PID updated: ");
-        } else {
-            fanPID.kp = kp;
-            fanPID.ki = ki;
-            fanPID.kd = kd;
-            fanPID.reset();
-            Serial.print("Fan PID updated: ");
-        }
+        heaterPID.kp = kp;
+        heaterPID.ki = ki;
+        heaterPID.kd = kd;
+        heaterPID.feedForwardGain = ff;
+        heaterPID.reset();
+        Serial.print("Heater PID updated: ");
 
         Serial.print(kp);
         Serial.print(" ");
         Serial.print(ki);
         Serial.print(" ");
-        Serial.println(kd);
+        Serial.print(kd);
+        Serial.print(" ");
+        Serial.println(ff);
     }
 
     // HEATER <VALUE>
@@ -102,7 +96,7 @@ inline void handleSerialInput() {
 inline void printVerboseStats() {
     if (FAN_ENABLED) {
         Serial.print("Fan speed: ");
-        Serial.print(currentFanSpeed / FAN_MAX_SPEED * 100.0);
+        Serial.print(fanSpeed);
         Serial.print("% - ");
         Serial.print(currentFanSpeed);
         Serial.print("PWM ");
@@ -143,7 +137,7 @@ inline void printVerboseStats() {
 
 inline void printStats() {
     if (FAN_ENABLED) {
-        Serial.print(currentFanSpeed);
+        Serial.print(fanSpeed);
         Serial.print(",");
         Serial.print(currentFanSpeed / FAN_MAX_SPEED * 100.0);
         Serial.print(",");
@@ -170,6 +164,7 @@ inline void printStats() {
         Serial.print(",");
         Serial.print(boxWaterVaporMass);
     }
+
 }
 
 inline void log(String message) {

@@ -24,14 +24,13 @@ unsigned long lastThermistorUpdate = 0UL;
 float overrideFanSpeed = -1.0f;
 float fanSpeed = 0.0f;
 float currentFanSpeed = 0.0f;
-PID fanPID(0.3f, 0.005f, 0.01f, HEATER_SETPOINT, FAN_MIN_SPEED, FAN_MAX_SPEED, PID::Direction::REVERSE);
 unsigned long lastFanUpdate = 0UL;
 unsigned long lastFanSpeedUpdate = 0UL;
 
 /* Hotend module */
-float hotEndOutput = 0;
+float hotEndOutput = 0.0f;
 float overrideHeaterOutput = -1.0f;
-PID heaterPID(4.5f, 1.15f, 0.15f, HEATER_SETPOINT, 0.0, 255.0, PID::Direction::DIRECT);
+PID heaterPID(5.5f, 0.06f, 0.015f, 1.60f, HEATER_SETPOINT, 0.0, 255.0, PID::Direction::DIRECT);
 unsigned long lastHeaterUpdate = 0UL;
 
 /* LCD module */

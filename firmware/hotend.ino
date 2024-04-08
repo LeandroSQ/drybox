@@ -18,12 +18,7 @@ void updateHeater() {
         return;
     }
 
-    // Ensure the hotend is always at least at room temperature
-    if (hotEndTemperature.value < heaterPID.setPoint) {
-        heaterPID.update(hotEndTemperature.value);
-    } else {
-        heaterPID.update(boxTemperature.value);
-    }
+    heaterPID.update(boxTemperature.value, hotEndTemperature.value);
 
     hotEndOutput = heaterPID.output;
 
