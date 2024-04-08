@@ -29,7 +29,7 @@ constexpr float BOX_VOLUME_M3 = 0.062203869f;// m³
 
 /* Accuracy */
 constexpr unsigned char AVG_SAMPLES = 2;
-constexpr float THERMISTOR_OFFSET = 5.0f;
+constexpr float THERMISTOR_OFFSET = 5.5f;
 constexpr float DHT_TEMPERATURE_OFFSET = 0.0f;
 constexpr float DHT_HUMIDITY_OFFSET = 0.0f;
 constexpr float DHT_CHANGE_THRESHOLD = 0.45f;

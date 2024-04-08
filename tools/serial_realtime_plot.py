@@ -39,16 +39,12 @@ def handle_commands(connection, command):
     if command.startswith("pid"):
         parts = command.split(" ")
         if len(parts) == 5:
-            target = parts[1].lower()
-            if target != "heater" and target != "fan":
-                print("Target must be either HEATER or FAN")
-                return
 
-            target = "0" if target == "heater" else "1"
-            connection.write(f"PID {target} {parts[2]} {parts[3]} {parts[4]}\n".encode())
+
+            connection.write(f"PID {parts[1]} {parts[2]} {parts[3]} {parts[4]}\n".encode())
             print("Sent!")
         else:
-            print("Usage: PID <TARGET> <KP> <KI> <KD>")
+            print("Usage: PID <KP> <KI> <KD> <FF>")
 
     # SETPOINT <TEMP>
     if command.startswith("setpoint"):
