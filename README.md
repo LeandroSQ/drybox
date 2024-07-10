@@ -31,7 +31,7 @@ This repo contains all the information I gathered while developing my DryBox. It
 - [x] LCD 16x2 display using I2C
   - [x] Custom icons on the LCD display
 - [x] Bowden tube from the box to the printer
-- [  ] Filament runout sensor
+- [ ] Filament runout sensor
   - Already bought, have to install
 
 ## Integrations
