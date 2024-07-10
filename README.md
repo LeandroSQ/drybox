@@ -1,6 +1,8 @@
 # DryBox
 
-Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware running on the MCU inside the DryBox.
+2 in 1 solution for Storing and Drying Filament for 3D printing.
+
+This repo contains all the information I gathered while developing my DryBox. It is a work in progress, and I will keep updating it as I go.
 
 <p align=center>
     <img src=".github/screenshot02.png" width=650 style="border-radius: 5pt" alt="Image of a LCD screen with the message 'DryBox 1.0 by LeandroSQ01'">
@@ -9,11 +11,14 @@ Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware
 ## Features
 
 - [x] PID control of the temperature
+    - [x] Feed forward control using the hotend temperature
+        - After stabilizing the box temperature, I get .1ºC of error. I'm happy with that.
+    - [x] Anti-windup
 - [x] IO/Serial
-  - Readings to Serial every X seconds
-  - Commands to control the DryBox such as:
+  - Send values and readings to the serial port every X seconds
+  - Receives serial commands such as:
     - `SETPOINT <value>` - Set the temperature setpoint
-    - `PID <HEATER OR FAN> </HEATER><Kp> <Ki> <Kd>` - Tune the PID values
+    - `PID <Kp> <Ki> <Kd> <FF>` - Tune the PID values
     - `FAN <value>` - Override the FAN speed
     - `HEATER <value>` - Override the Heater output
 - [x] Home assistant integration
@@ -21,8 +26,10 @@ Aiming to dry my 3D filament spools, I have built a DryBox, this is the firmware
 - [x] Safety features
   - [x] Over temperature protection
   - [x] DHT sensor error detection
+  - [x] Watchdog timer
 - [x] Calculates absolute humidity and the water vapor mass inside the box
 - [x] LCD 16x2 display using I2C
+  - [x] Custom icons on the LCD display
 - [x] Bowden tube from the box to the printer
 - [  ] Filament runout sensor
   - Already bought, have to install
@@ -118,6 +125,12 @@ Some other stuff that helps:
 - 3D printer (duh)
 
 And some other stuff I forgot to mention here.
+
+## Notes
+
+I printed everything with PLA, given that the temperatures should not exceed 60ºC inside the box, it should be fine. But while developing this I had an issue where the box stayed at 70ºC for a long time, and the fan support made with PLA started to deform. It still works, but probably a better idea to print in PETG or ABS ASA.
+
+The PLA I used was HT, but I did not perform the cristalization process, so it is not as strong as it could be.
 
 ## Circuit
 

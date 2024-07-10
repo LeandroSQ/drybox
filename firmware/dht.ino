@@ -23,10 +23,10 @@ void updateDHT() {
 
     boxTemperature.set(temperature);
     boxHumidity.set(humidity);
-    calculateAbsoluteHumidity(temperature, humidity, boxAbsoluteHumidity, boxWaterVaporMass);
+    calculateAbsoluteHumidity(temperature, humidity, boxAbsoluteHumidity, boxWaterVaporMass, boxMaxWaterVaporMass);
 }
 
-inline void calculateAbsoluteHumidity(const float airTemperature, const float relativeHumidity, float &absoluteHumidity, float &waterVaporMass) {
+inline void calculateAbsoluteHumidity(const float airTemperature, const float relativeHumidity, float &absoluteHumidity, float &waterVaporMass, float &maxWaterVaporMass) {
     // Teten's formula
     const float saturationVaporPressure = 0.611 * exp((17.502 * airTemperature) / (240.97 + airTemperature)); // KPa
     const float vaporPressure = (relativeHumidity / 100.0f) * saturationVaporPressure; // KPa
@@ -37,6 +37,10 @@ inline void calculateAbsoluteHumidity(const float airTemperature, const float re
     const float kelvinTemperature = airTemperature + 273.15f; // K
     const float vaporDensity = ((vaporPressure * waterMolarMass) / (gasConstant * kelvinTemperature)) * 1000.0f; // g/m³
 
+    // Calculate the maximum amount of water vapor that can be in the air
+    const float saturationVaporDensity = ((saturationVaporPressure * waterMolarMass) / (gasConstant * kelvinTemperature)) * 1000.0f; // g/m³
+
     absoluteHumidity = vaporDensity;
     waterVaporMass = BOX_VOLUME_M3 * vaporDensity;
+    maxWaterVaporMass = BOX_VOLUME_M3 * saturationVaporDensity;
 }

@@ -53,9 +53,10 @@ constexpr float FAN_MAX_SPEED = 50.0f;
 constexpr float FAN_MIN_SPEED = 25.0f;
 
 /* Temperature */
-constexpr float MAX_HEATER_TEMP = 70.0f;
+constexpr float HOT_END_MAX_TEMP = 55.0f;
+constexpr float MAX_HEATER_TEMP = 62.0f;
 constexpr float HEATER_SETPOINT = 45.0f;
-constexpr bool ENABLE_HEATER_SAFETY_RANGE = false;
+constexpr bool ENABLE_HEATER_SAFETY_RANGE = true;
 
 /* LCD */
 constexpr unsigned char LCD_ADDRESS = 0x27;

@@ -14,12 +14,6 @@ void updateIO() {
     Serial.println();
 }
 
-int getFreeRAM() {
-    extern int __heap_start, *__brkval;
-    int v;
-    return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
-}
-
 inline void handleSerialInput() {
     if (Serial.available() <= 0) return;
     String input = Serial.readString();
@@ -110,7 +104,7 @@ inline void printVerboseStats() {
 
     if (HEATER_ENABLED) {
         Serial.print("Heater setpoint: ");
-        Serial.print(HEATER_SETPOINT);
+        Serial.print(heaterPID.setPoint);
         Serial.print("°C ");
         Serial.print("Heater output: ");
         Serial.print((hotEndOutput * 100.0) / 255.0);
@@ -127,7 +121,9 @@ inline void printVerboseStats() {
         Serial.print("g/m³ ");
         Serial.print("Box water vapor mass: ");
         Serial.print(boxWaterVaporMass);
-        Serial.print("g ");
+        Serial.print("g (Max: ");
+        Serial.print(boxMaxWaterVaporMass);
+        Serial.print("g) ");
     }
 
     Serial.print("Free RAM: ");
@@ -149,7 +145,7 @@ inline void printStats() {
     }
 
     if (HEATER_ENABLED) {
-        Serial.print(HEATER_SETPOINT);
+        Serial.print(heaterPID.setPoint);
         Serial.print(",");
         Serial.print((hotEndOutput * 100.0) / 255.0);
         Serial.print(",");

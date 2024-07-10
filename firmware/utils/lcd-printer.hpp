@@ -9,7 +9,8 @@ enum Icon : unsigned char {
     THERMOMETER = 3,
     PLUG = 4,
     FAN0 = 5,
-    FAN1 = 6
+    FAN1 = 6,
+    HEAT = 7
 };
 
 enum DigitCount : unsigned char {
@@ -156,6 +157,17 @@ struct LCDPrinter {
             B00000
         };
 
+        unsigned char heat[] = {
+            B00000,
+            B01001,
+            B01001,
+            B10010,
+            B10010,
+            B01001,
+            B10010,
+            B00000
+        };
+
         lcd.createChar(Icon::CELSIUS, celsius);
         lcd.createChar(Icon::DROPLET, droplet);
         lcd.createChar(Icon::CUBIC, cubic);
@@ -163,6 +175,7 @@ struct LCDPrinter {
         lcd.createChar(Icon::PLUG, plug);
         lcd.createChar(Icon::FAN0, fan0);
         lcd.createChar(Icon::FAN1, fan1);
+        lcd.createChar(Icon::HEAT, heat);
     }
 
 };
