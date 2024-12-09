@@ -7,6 +7,7 @@ void updateDHT() {
     float humidity = dht.readHumidity() - DHT_HUMIDITY_OFFSET;
     if (isnan(temperature) || temperature <= DHT_MIN_TEMP || temperature > DHT_MAX_TEMP || isnan(humidity) || humidity <= DHT_MIN_HUMIDITY || humidity > DHT_MAX_HUMIDITY) {
         log("Failed to read DHT values!");
+        invalidDHTReads++;
         return;
     }
 
@@ -18,9 +19,11 @@ void updateDHT() {
         log("Previous: " + String(boxTemperature.value) + "°C, " + String(boxHumidity.value) + "%");
         log("Threshold: " + String(DHT_CHANGE_THRESHOLD));
         log("Difference: " + String(abs((temperature - boxTemperature.value) / boxTemperature.value)) + ", " + String(abs((humidity - boxHumidity.value) / boxHumidity.value)));
+        invalidDHTReads++;
         return;
     }
 
+    invalidDHTReads = 0;
     boxTemperature.set(temperature);
     boxHumidity.set(humidity);
     calculateAbsoluteHumidity(temperature, humidity, boxAbsoluteHumidity, boxWaterVaporMass, boxMaxWaterVaporMass);

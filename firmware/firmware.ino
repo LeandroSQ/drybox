@@ -17,11 +17,13 @@ float boxAbsoluteHumidity = 0.0f;
 float boxWaterVaporMass = 0.0f;
 float boxMaxWaterVaporMass = 0.0f;
 unsigned long lastDHTUpdate = 0UL;
+unsigned char invalidDHTReads = 0;
 
 /* Thermistor module */
 Thermistor thermistor(THERMISTOR_PIN);
 Accumulator hotEndTemperature;
 unsigned long lastThermistorUpdate = 0UL;
+unsigned char invalidThermistorReads = 0;
 
 /* Fan module */
 float overrideFanSpeed = -1.0f;
@@ -92,22 +94,66 @@ void loop() {
     wdt_reset();
 
     updateThermistor();
-    updateHeater();
     updateDHT();
+
+    // Ensure we don't have too many invalid reads
+    if (invalidDHTReads >= MAX_INVALID_READS || invalidThermistorReads >= MAX_INVALID_READS) return safetyOverride();
+
+    updateHeater();
     updateFan();
     updateLCD();
     updateIO();
 }
 
-// Watchdog timer interrupt
-ISR(WDT_vect) {
+inline void safetyShutdown() {
     // For safety, turn off the heater and fan
     if constexpr (HEATER_ENABLED) {
         analogWrite(HEATER_PIN, 0);
     }
+
     if constexpr (FAN_ENABLED) {
         analogWrite(FAN_PIN, 0);
     }
+}
+
+void safetyOverride() {
+    // Disable the watchdog timer
+    wdt_disable();
+
+    log("Too many invalid reads, safety override!");
+    safetyShutdown();
+
+    // Serial output
+    Serial.println("Failure!");
+
+    // LCD output
+    if constexpr (LCD_ENABLED) {
+        lcd.clear();
+        lcd.printCentered("Safety override!");
+        bool dhtFailure = invalidDHTReads >= MAX_INVALID_READS;
+        bool thermistorFailure = invalidThermistorReads >= MAX_INVALID_READS;
+        lcd.setCursor(0, 1);
+        if (dhtFailure) lcd.print("DHT");
+        if (dhtFailure && thermistorFailure) lcd.print(" & ");
+        if (thermistorFailure) lcd.print("Therm");
+    }
+
+    // Delay 20 seconds and blink the LCD backlight
+    for (int i = 0; i < 20; i++) {
+        delay(500);
+        lcd.setBacklight(false);
+        delay(500);
+        lcd.setBacklight(true);
+    }
+
+    // Reset the board
+    asm volatile ("  jmp 0");
+}
+
+// Watchdog timer interrupt
+ISR(WDT_vect) {
+    // For safety, turn off the heater and fan
+    safetyShutdown();
 
     // Reset the board
     asm volatile ("  jmp 0");

@@ -27,6 +27,9 @@ constexpr bool IO_VERBOSE = false;
 // Converting from L to m³
 constexpr float BOX_VOLUME_M3 = 0.062203869f;// m³
 
+/* Safety */
+constexpr unsigned char MAX_INVALID_READS = 5;
+
 /* Accuracy */
 constexpr unsigned char AVG_SAMPLES = 2;
 constexpr float THERMISTOR_OFFSET = 5.5f;
@@ -34,10 +37,12 @@ constexpr float DHT_TEMPERATURE_OFFSET = 0.0f;
 constexpr float DHT_HUMIDITY_OFFSET = 0.0f;
 constexpr float DHT_CHANGE_THRESHOLD = 0.45f;
 constexpr float THERMISTOR_CHANGE_THRESHOLD = 0.65f;
-constexpr float DHT_MIN_TEMP = 0.0f;
+constexpr float DHT_MIN_TEMP = 1.0f;
 constexpr float DHT_MAX_TEMP = 50.0f;
-constexpr float DHT_MIN_HUMIDITY = 0.0f;
-constexpr float DHT_MAX_HUMIDITY = 100.0f;
+constexpr float THERMISTOR_MIN_TEMP = 10.0f;
+constexpr float THERMISTOR_MAX_TEMP = 80.0f;
+constexpr float DHT_MIN_HUMIDITY = 5.0f;
+constexpr float DHT_MAX_HUMIDITY = 95.0f;
 
 /* Intervals */
 constexpr unsigned long DHT_UPDATE_INTERVAL = 1750UL;

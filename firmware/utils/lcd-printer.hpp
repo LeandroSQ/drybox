@@ -32,6 +32,11 @@ struct LCDPrinter {
         setupIcons();
     }
 
+    inline setBacklight(bool state) {
+        if (state) lcd.backlight();
+        else lcd.noBacklight();
+    }
+
     inline clear() {
         lcd.clear();
     }
